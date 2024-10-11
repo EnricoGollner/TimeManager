@@ -1,2 +1,2 @@
-# TimeManager
-App to help managing time.
+# WorkingTimeManager
+App to help managing working time.
