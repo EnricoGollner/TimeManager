@@ -3,19 +3,20 @@ import 'package:provider/provider.dart';
 import 'package:working_time_manager/app/controller/working_time_controller.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
 import 'package:working_time_manager/app/shared/components/custom_text_field.dart';
+import 'package:working_time_manager/app/shared/util/decimal_text_input_formatter.dart';
 import 'package:working_time_manager/app/shared/util/formatter.dart';
 import 'package:working_time_manager/app/shared/util/validator.dart';
 import 'package:working_time_manager/core/app_responsivity.dart';
 import 'package:working_time_manager/core/theme/fonts.dart';
 
-class TimeRegister extends StatefulWidget {
-  const TimeRegister({super.key});
+class TimeRegisterModal extends StatefulWidget {
+  const TimeRegisterModal({super.key});
 
   @override
-  TimeRegisterState createState() => TimeRegisterState();
+  TimeRegisterModalState createState() => TimeRegisterModalState();
 }
 
-class TimeRegisterState extends State<TimeRegister> {
+class TimeRegisterModalState extends State<TimeRegisterModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _ctrlCompanyName = TextEditingController();
@@ -23,14 +24,14 @@ class TimeRegisterState extends State<TimeRegister> {
   late DateTime _monthYear;
   late final TextEditingController _ctrlMonthYear;
 
-  TimeOfDay _timeToPay = const TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _payedTime = const TimeOfDay(hour: 0, minute: 0);
+  Duration _timeToPay = const Duration();
+  Duration _payedTime = const Duration();
   late final TextEditingController _ctrlTimeToPay;
   late final TextEditingController _ctrlPayedTime;
 
   final TextEditingController _ctrlSalaryPerMonth = TextEditingController();
 
-  TimeOfDay _hoursJourney = const TimeOfDay(hour: 0, minute: 0);
+  Duration _hoursJourney = const Duration();
   final TextEditingController _ctrlHoursJourney = TextEditingController();
 
   @override
@@ -38,8 +39,8 @@ class TimeRegisterState extends State<TimeRegister> {
     _monthYear = DateTime.now();
     _ctrlMonthYear = TextEditingController(text: Formatter.monthYear(_monthYear));
 
-    _ctrlTimeToPay = TextEditingController(text: Formatter.time(_timeToPay));
-    _ctrlPayedTime = TextEditingController(text: Formatter.time(_payedTime));
+    _ctrlTimeToPay = TextEditingController(text: Formatter.durationToString(_timeToPay));
+    _ctrlPayedTime = TextEditingController(text: Formatter.durationToString(_payedTime));
     super.initState();
   }
 
@@ -78,8 +79,8 @@ class TimeRegisterState extends State<TimeRegister> {
                       ),
                       const SizedBox(height: 15),
                       CustomTextField(
+                        autofocus: true,
                         validatorFunction: Validator.isRequired,
-                        
                         label: "Company's name:",
                         controller: _ctrlCompanyName,
                         hintText: "Inform company's name here...",
@@ -112,8 +113,8 @@ class TimeRegisterState extends State<TimeRegister> {
                               controller: _ctrlTimeToPay,
                               label: "Time to pay:",
                               onTap: () async {
-                                _timeToPay = await _showTimePicker(initialTime: _timeToPay) ?? _timeToPay;
-                                _ctrlTimeToPay.text = Formatter.time(_timeToPay);
+                                _timeToPay = await _showTimePicker(initialTime: TimeOfDay(hour: _timeToPay.inHours, minute: (_timeToPay.inMinutes % 60)), helpText: 'Select the time to pay');
+                                _ctrlTimeToPay.text = Formatter.durationToString(_timeToPay);
                               },
                               hintText: 'Month & Year',
                             ),
@@ -125,8 +126,8 @@ class TimeRegisterState extends State<TimeRegister> {
                               controller: _ctrlPayedTime,
                               label: "Payed time:",
                               onTap: () async {
-                                _payedTime = await _showTimePicker(initialTime: _payedTime) ?? _payedTime;
-                                _ctrlPayedTime.text = Formatter.time(_payedTime);
+                                _payedTime = await _showTimePicker(initialTime: TimeOfDay(hour: _payedTime.inHours, minute: (_payedTime.inMinutes % 60)), helpText: 'Select the payed time');
+                                _ctrlPayedTime.text = Formatter.durationToString(_payedTime);
                               },
                               hintText: 'Month & Year',
                             ),
@@ -137,8 +138,13 @@ class TimeRegisterState extends State<TimeRegister> {
                       CustomTextField.currency(
                         validatorFunction: Validator.isRequired,
                         controller: _ctrlSalaryPerMonth,
+                        handleDecimal: true,
                         label: 'Salary per month:',
-                        hintText: Formatter.formatNumber(0.0, 2),
+                        hintText: Formatter.formatNumber(0.0, showCurrencyPrefix: false),
+                        inputFormatters: [
+                          DecimalTextInputFormatter.regexSignal,
+                          DecimalTextInputFormatter(decimalRange: 2),
+                        ],
                       ),
                       const SizedBox(height: 15),
                       CustomTextField.dateTimeField(
@@ -146,8 +152,8 @@ class TimeRegisterState extends State<TimeRegister> {
                         controller: _ctrlHoursJourney,
                         label: "Working journey hours",
                         onTap: () async {
-                          _hoursJourney = await _showTimePicker(initialTime: _hoursJourney) ?? _hoursJourney;
-                          _ctrlHoursJourney.text = Formatter.time(_hoursJourney);
+                          _hoursJourney = await _showTimePicker(initialTime: TimeOfDay(hour: _hoursJourney.inHours, minute: (_hoursJourney.inMinutes % 60)), helpText: 'Select the working journey hours');
+                          _ctrlHoursJourney.text = Formatter.durationToString(_hoursJourney);
                         },
                         hintText: 'Month & Year',
                       ),
@@ -193,6 +199,7 @@ class TimeRegisterState extends State<TimeRegister> {
   Future<void> _createRegister() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       final int workingDaysCount = getWorkingDaysCount;
+      final double dailySalary = getSalaryPerDay(workingDaysCount);
 
       final Register newRegister = Register(
         id: context.read<WorkingTimeController>().registers.length,
@@ -201,7 +208,7 @@ class TimeRegisterState extends State<TimeRegister> {
         timeToPay: _timeToPay,
         payedTime: _payedTime,
         salaryPerMonth: Formatter.textToNum(text: _ctrlSalaryPerMonth.text).toDouble(),
-        salaryPerDay: getSalaryPerDay(workingDaysCount),
+        dailySalary: dailySalary,
         workingDaysCount: workingDaysCount,
         workingJourneyHours: _hoursJourney,
       );
@@ -211,9 +218,10 @@ class TimeRegisterState extends State<TimeRegister> {
     }
   }
 
-  Future<TimeOfDay?> _showTimePicker({required TimeOfDay initialTime}) async {
-    return await showTimePicker(
+  Future<Duration> _showTimePicker({required TimeOfDay initialTime, required String helpText}) async {
+    final TimeOfDay? timeOfDay = await showTimePicker(
       context: context,
+      helpText: helpText,
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -222,5 +230,7 @@ class TimeRegisterState extends State<TimeRegister> {
       },
         initialTime: initialTime,
       );
+
+    return Duration(hours: timeOfDay?.hour ?? 0, minutes: timeOfDay?.minute ?? 0);
   }
 }

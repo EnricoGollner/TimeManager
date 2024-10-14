@@ -4,8 +4,8 @@ import 'package:working_time_manager/app/pages/widgets/indicator_widget.dart';
 import 'package:working_time_manager/core/app_responsivity.dart';
 
 class PizzaChart extends StatefulWidget {
-  final num workedValue;
-  final num notWorkedValue;
+  final double workedValue;
+  final double notWorkedValue;
 
   const PizzaChart({
     super.key,
@@ -43,8 +43,7 @@ class PizzaChatState extends State<PizzaChart> {
                           touchedIndex = -1;
                           return;
                         }
-                        touchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
+                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
                       });
                     },
                   ),
@@ -96,8 +95,8 @@ class PizzaChatState extends State<PizzaChart> {
         case 0:
           return PieChartSectionData(
             color: Colors.red,
-            value: widget.workedValue.toDouble(),
-            title: '${widget.workedValue}%',
+            value: widget.notWorkedValue.toDouble(),
+            title: '${widget.notWorkedValue}%',
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,
@@ -109,8 +108,8 @@ class PizzaChatState extends State<PizzaChart> {
         case 1:
           return PieChartSectionData(
             color: Colors.green,
-            value: widget.notWorkedValue.toDouble(),
-            title: '${widget.notWorkedValue}%',
+            value: widget.workedValue.toDouble(),
+            title: '${widget.workedValue}%',
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,

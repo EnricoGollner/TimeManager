@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:working_time_manager/app/shared/components/custom_icon.dart';
+import 'package:working_time_manager/app/shared/util/validator.dart';
 import 'package:working_time_manager/core/app_responsivity.dart';
 import 'package:working_time_manager/core/theme/fonts.dart';
 
@@ -148,6 +149,19 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
+
+  @override
+  void initState() {
+    if(widget.handleDecimal && widget.focusNode != null){
+      widget.focusNode!.addListener(() {
+        if (!widget.focusNode!.hasFocus && widget.controller != null) {
+          Validator.handleDecimal(widget.controller!, decimalRange: 2); 
+        }
+      });
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

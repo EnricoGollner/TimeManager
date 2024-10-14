@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:flutter/src/material/time.dart';
 import 'package:intl/intl.dart';
 
 class Formatter {
-  static String formatNumber(num value, int decimalRange) {
+  static String formatNumber(num value, {int decimalRange = 2, bool showCurrencyPrefix = true}) {
     if (decimalRange == 0) return value.toStringAsFixed(0);
 
     String formatPattern = '#,##0.${'0' * decimalRange}';
-    final currentFormatter = NumberFormat(formatPattern, Platform.localeName);
-    return currentFormatter.format(value);
+    final String numberFormatted = NumberFormat(formatPattern, Platform.localeName).format(value);
+    
+    return showCurrencyPrefix ? 'R\$ $numberFormatted' : numberFormatted;
   }
 
   ///Método para formatar o valor do texto para número
@@ -35,7 +35,10 @@ class Formatter {
     return DateFormat('MMM/yyyy', Platform.localeName).format(monthYear);
   }
 
-  static String time(TimeOfDay timeToPay) {
-    return '${timeToPay.hour}:${timeToPay.minute} horas';
+  static String durationToString(Duration timeToPay) {
+    final int hours = timeToPay.inHours;
+    final int minutes = timeToPay.inMinutes % 60;
+
+    return '$hours:${minutes.toString().padLeft(2, '0')} horas';
   }
 }

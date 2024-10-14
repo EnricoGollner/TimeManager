@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-
 class Register {
   int id;
   String company;
   DateTime monthYear;
-  TimeOfDay timeToPay;
-  TimeOfDay payedTime;
+  Duration timeToPay;
+  Duration payedTime;
   double salaryPerMonth;
-  double? salaryPerDay; //(obtained dividing salary per month by working days count)
-  int workingDaysCount;  // The app will obtain it
-  TimeOfDay workingJourneyHours;  //Not counting breaks
+  double dailySalary; //(obtained dividing salary per month by working days count)
+  int workingDaysCount;  // The app will obtain it, looping and counting every business day 
+  Duration workingJourneyHours;  //Not counting breaks
 
   Register({
     required this.id,
@@ -18,7 +16,7 @@ class Register {
     required this.timeToPay,
     required this.payedTime,
     required this.salaryPerMonth,
-    this.salaryPerDay,
+    this.dailySalary = 0,
     required this.workingDaysCount,
     required this.workingJourneyHours,
   });
@@ -34,7 +32,7 @@ class Register {
       other.timeToPay == timeToPay &&
       other.payedTime == payedTime &&
       other.salaryPerMonth == salaryPerMonth &&
-      other.salaryPerDay == salaryPerDay &&
+      other.dailySalary == dailySalary &&
       other.workingDaysCount == workingDaysCount &&
       other.workingJourneyHours == workingJourneyHours;
   }
@@ -47,8 +45,28 @@ class Register {
       timeToPay.hashCode ^
       payedTime.hashCode ^
       salaryPerMonth.hashCode ^
-      salaryPerDay.hashCode ^
+      dailySalary.hashCode ^
       workingDaysCount.hashCode ^
       workingJourneyHours.hashCode;
+  }
+
+  double get notWorkedPercentage {
+    double timeToPayInHours = timeToPay.inMinutes / 60;
+    double payedTimeInHours = payedTime.inMinutes / 60;
+
+    double notWorkedTimeInHours = timeToPayInHours - payedTimeInHours;
+
+    return (notWorkedTimeInHours > 0 ? notWorkedTimeInHours : 0) * 100 / timeToPayInHours;
+  }
+
+  double get workedPercentage {
+    double timeToPayInHours = timeToPay.inMinutes / 60;
+    double payedTimeInHours = payedTime.inMinutes / 60;
+
+    double workedTimeInHours = payedTimeInHours;
+
+    return (workedTimeInHours <= timeToPayInHours) 
+      ? (workedTimeInHours / timeToPayInHours) * 100 
+      : 100;
   }
 }

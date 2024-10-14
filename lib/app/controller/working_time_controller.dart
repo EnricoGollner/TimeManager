@@ -27,9 +27,10 @@ class WorkingTimeController extends ChangeNotifier {
 
   // Create
   Future<void> createRegister({required Register newRegister}) async {
-    // await isar.writeTxn(() => isar.workingTimeRegisters.put(time));
     registers.add(newRegister);
-    await getTimeRegisters();
+    notifyListeners();
+    // await isar.writeTxn(() => isar.workingTimeRegisters.put(time));
+    // await getTimeRegisters();
   }
 
   // Read
