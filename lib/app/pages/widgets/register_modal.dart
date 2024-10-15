@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:working_time_manager/app/controller/working_time_controller.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
+import 'package:working_time_manager/app/pages/widgets/custom_month_year_picker/custom_month_year_picker.dart';
 import 'package:working_time_manager/app/shared/components/custom_text_field.dart';
 import 'package:working_time_manager/app/shared/util/decimal_text_input_formatter.dart';
 import 'package:working_time_manager/app/shared/util/formatter.dart';
@@ -9,14 +10,14 @@ import 'package:working_time_manager/app/shared/util/validator.dart';
 import 'package:working_time_manager/core/app_responsivity.dart';
 import 'package:working_time_manager/core/theme/fonts.dart';
 
-class TimeRegisterModal extends StatefulWidget {
-  const TimeRegisterModal({super.key});
+class RegisterModal extends StatefulWidget {
+  const RegisterModal({super.key});
 
   @override
-  TimeRegisterModalState createState() => TimeRegisterModalState();
+  RegisterModalState createState() => RegisterModalState();
 }
 
-class TimeRegisterModalState extends State<TimeRegisterModal> {
+class RegisterModalState extends State<RegisterModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _ctrlCompanyName = TextEditingController();
@@ -88,20 +89,20 @@ class TimeRegisterModalState extends State<TimeRegisterModal> {
                       const SizedBox(height: 15),
                       CustomTextField.dateTimeField(
                         validatorFunction: Validator.isRequired,
-                        onTap: () {
-                          showDatePicker(
+                        onTap: () async {
+                          _monthYear = await CustomMonthYearPicker.showMonthYearPickerDialog(
                             context: context,
-                            initialDate: DateTime.now(),
-                            helpText: 'Selecione a data do prazo',
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime.now().add(const Duration(days: 365)),
-                            confirmText: 'Selecionar',
-                          ).then(
-                            (prazoSelecionado) async {},
+                            backgroundColor: Theme.of(context).colorScheme.surface,
+                            selectionColor: Theme.of(context).colorScheme.secondary,
+                            titleTextStyle: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 17),
+                            yearTextStyle: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 17),
+                            monthTextStyle: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 16),
+                            confirmTextColor: Theme.of(context).colorScheme.inversePrimary,
                           );
+                          _ctrlMonthYear.text = Formatter.monthYear(_monthYear);
                         },
                         controller: _ctrlMonthYear,
-                        label: "Dashboard's Month & Year:",
+                        label: "Month & Year:",
                         hintText: 'Month & Year',
                       ),
                       const SizedBox(height: 15),
@@ -228,8 +229,8 @@ class TimeRegisterModalState extends State<TimeRegisterModal> {
           child: child!,
         );
       },
-        initialTime: initialTime,
-      );
+      initialTime: initialTime,
+    );
 
     return Duration(hours: timeOfDay?.hour ?? 0, minutes: timeOfDay?.minute ?? 0);
   }

@@ -32,6 +32,16 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('${_register.company} - ${Formatter.monthYear(_register.monthYear)}', style: appBarTitleStyle(context)),
+        actions: [
+          IconButton(
+            tooltip: 'Delete Dashboard',
+            onPressed: () {
+              context.read<WorkingTimeController>().deleteTimeRegister(_register.id);
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        ],
       ),
       body: Column(
         children: [

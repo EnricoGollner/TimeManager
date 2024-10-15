@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
 import 'package:working_time_manager/app/controller/working_time_controller.dart';
 import 'package:working_time_manager/app/pages/register_info_page.dart';
-import 'package:working_time_manager/app/pages/widgets/time_register_modal.dart';
+import 'package:working_time_manager/app/pages/widgets/register_modal.dart';
 import 'package:working_time_manager/app/shared/components/custom_drawer.dart';
 import 'package:working_time_manager/app/shared/components/register_tile.dart';
 import 'package:working_time_manager/app/shared/util/formatter.dart';
@@ -79,7 +79,7 @@ class _MainPageState extends State<MainPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return const TimeRegisterModal();
+        return const RegisterModal();
       },
     );
   }

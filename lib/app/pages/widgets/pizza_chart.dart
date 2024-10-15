@@ -95,8 +95,8 @@ class PizzaChatState extends State<PizzaChart> {
         case 0:
           return PieChartSectionData(
             color: Colors.red,
-            value: widget.notWorkedValue.toDouble(),
-            title: '${widget.notWorkedValue}%',
+            value: widget.notWorkedValue,
+            title: '${widget.notWorkedValue.toStringAsFixed(2)}%',
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,
@@ -108,8 +108,8 @@ class PizzaChatState extends State<PizzaChart> {
         case 1:
           return PieChartSectionData(
             color: Colors.green,
-            value: widget.workedValue.toDouble(),
-            title: '${widget.workedValue}%',
+            value: widget.workedValue,
+            title: '${widget.workedValue.toStringAsFixed(2)}%',
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,

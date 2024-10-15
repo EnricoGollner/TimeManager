@@ -55,18 +55,19 @@ class Register {
     double payedTimeInHours = payedTime.inMinutes / 60;
 
     double notWorkedTimeInHours = timeToPayInHours - payedTimeInHours;
+    double percentage = (notWorkedTimeInHours > 0 ? notWorkedTimeInHours : 0) * 100 / timeToPayInHours;
 
-    return (notWorkedTimeInHours > 0 ? notWorkedTimeInHours : 0) * 100 / timeToPayInHours;
+    return percentage.isNaN ? 0 : percentage;
   }
 
   double get workedPercentage {
     double timeToPayInHours = timeToPay.inMinutes / 60;
     double payedTimeInHours = payedTime.inMinutes / 60;
 
-    double workedTimeInHours = payedTimeInHours;
-
-    return (workedTimeInHours <= timeToPayInHours) 
-      ? (workedTimeInHours / timeToPayInHours) * 100 
+    final double workedPercentage = (payedTimeInHours <= timeToPayInHours) 
+      ? (payedTimeInHours / timeToPayInHours) * 100 
       : 100;
+
+    return workedPercentage.isNaN ? 0 : workedPercentage;
   }
 }
