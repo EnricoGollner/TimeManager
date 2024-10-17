@@ -26,32 +26,27 @@ class PizzaChatState extends State<PizzaChart> {
       aspectRatio: 1.4,
       child: Row(
         children: [
-          const SizedBox(
-            height: 18,
-          ),
+          const SizedBox(height: 18),
           Expanded(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                      });
-                    },
-                  ),
-                  borderData: FlBorderData(show: false),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 40,
-                  sections: showingSections(),
+            child: PieChart(
+              PieChartData(
+                pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                    setState(() {
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        touchedIndex = -1;
+                        return;
+                      }
+                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    });
+                  },
                 ),
+                borderData: FlBorderData(show: false),
+                sectionsSpace: 0,
+                centerSpaceRadius: 40,
+                sections: _showingSections(),
               ),
             ),
           ),
@@ -64,17 +59,13 @@ class PizzaChatState extends State<PizzaChart> {
                 text: 'Worked',
                 isSquare: true,
               ),
-              SizedBox(
-                height: 4,
-              ),
+              SizedBox(height: 4),
               Indicator(
                 color: Colors.red,
                 text: 'Not Worked',
                 isSquare: true,
               ),
-              SizedBox(
-                height: 18,
-              ),
+              SizedBox(height: 18),
             ],
           ),
           const SizedBox(
@@ -85,7 +76,7 @@ class PizzaChatState extends State<PizzaChart> {
     );
   }
 
-  List<PieChartSectionData> showingSections() {
+  List<PieChartSectionData> _showingSections() {
     return List.generate(2, (i) {
       final isTouched = i == touchedIndex;
       final double fontSize = isTouched ? 25.s : 16.s;

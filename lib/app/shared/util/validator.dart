@@ -11,7 +11,7 @@ class Validator {
     return null;
   }
 
-    static void handleDecimal(TextEditingController controller, {int decimalRange = 2, bool isCurrency = false}) {
+  static void handleDecimal(TextEditingController controller, {int decimalRange = 2, bool isCurrency = false}) {
     String signal = Platform.localeName == 'pt_BR' ? ',' : '.';
     String controllerText = controller.text.isEmpty ? '0' : controller.text;
     String value = controllerText;

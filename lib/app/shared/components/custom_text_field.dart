@@ -267,11 +267,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     
               suffixIconConstraints: BoxConstraints.tight(const Size(60, 25)),
               filled: widget.isFilled,
-              hintStyle: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.9),
-              ),
+              hintStyle: hintTextStyle(context),
               hintText: widget.hintText,
               contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: Device.height < 600 ? 15 : 15.s),
             ),

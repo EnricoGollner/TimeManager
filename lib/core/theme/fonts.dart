@@ -14,8 +14,20 @@ TextStyle valueLabel(BuildContext context) => GoogleFonts.dmSerifText(
   );
 
 TextStyle textFieldStyle(BuildContext context) => GoogleFonts.dmSans(
-    fontSize: 14.s2,
+    fontSize: 13.5.s2,
     fontWeight: FontWeight.normal,
     color: Theme.of(context).colorScheme.inversePrimary,
     decoration: TextDecoration.none,
+  );
+
+TextStyle hintTextStyle(BuildContext context) => GoogleFonts.dmSans(
+    fontSize: 13.5.s2,
+    fontWeight: FontWeight.normal,
+    color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.7),
+    decoration: TextDecoration.none,
+  );
+
+TextStyle fabStyle(BuildContext context) => GoogleFonts.dmSans(
+    fontSize: 13.5.s,
+    color: Theme.of(context).colorScheme.inversePrimary,
   );

@@ -18,16 +18,18 @@ class RegisterInfoPage extends StatefulWidget {
 }
 
 class _RegisterInfoPageState extends State<RegisterInfoPage> {
+  late WorkingTimeController _controller;
   late Register _register;
 
   @override
   void initState() {
-    _register = context.read<WorkingTimeController>().selectedRegister!;
+    _controller = context.read<WorkingTimeController>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _register = context.watch<WorkingTimeController>().selectedRegister!;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -36,7 +38,7 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
           IconButton(
             tooltip: 'Delete Dashboard',
             onPressed: () {
-              context.read<WorkingTimeController>().deleteTimeRegister(_register.id);
+              _controller.deleteTimeRegister(_register.id);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.delete),
@@ -70,8 +72,8 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
                   value: Formatter.formatNumber(_hourlySalary),
                 ),
                 CustomValue(
-                  label: 'Paied Time',
-                  value: Formatter.durationToString(_register.payedTime),
+                  label: 'paid Time',
+                  value: Formatter.durationToString(_register.paidTime),
                 ),
                 CustomValue(
                   label: 'Time to pay',
@@ -85,6 +87,31 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
             ),
           )
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: ()  async {
+          final TimeOfDay? paidTime = await showTimePicker(
+            context: context,
+            initialTime: const TimeOfDay(hour: 1, minute: 0),
+            builder: (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                child: child!,
+              );
+            },
+          );
+          if (paidTime != null) {
+            _controller.updateRegister(_register.id, Duration(hours: paidTime.hour, minutes: paidTime.minute));
+          }
+        },
+        label: Text(
+          'Add paid hour',
+          style: fabStyle(context),
+        ),
+        icon: Icon(
+          Icons.more_time,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
       ),
     );
   }

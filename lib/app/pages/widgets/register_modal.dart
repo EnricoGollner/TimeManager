@@ -19,6 +19,7 @@ class RegisterModal extends StatefulWidget {
 
 class RegisterModalState extends State<RegisterModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final FocusNode _salaryPerMonthFocusNode = FocusNode();
 
   final TextEditingController _ctrlCompanyName = TextEditingController();
 
@@ -26,9 +27,9 @@ class RegisterModalState extends State<RegisterModal> {
   late final TextEditingController _ctrlMonthYear;
 
   Duration _timeToPay = const Duration();
-  Duration _payedTime = const Duration();
+  Duration _paidTime = const Duration();
   late final TextEditingController _ctrlTimeToPay;
-  late final TextEditingController _ctrlPayedTime;
+  late final TextEditingController _ctrlpaidTime;
 
   final TextEditingController _ctrlSalaryPerMonth = TextEditingController();
 
@@ -41,7 +42,7 @@ class RegisterModalState extends State<RegisterModal> {
     _ctrlMonthYear = TextEditingController(text: Formatter.monthYear(_monthYear));
 
     _ctrlTimeToPay = TextEditingController(text: Formatter.durationToString(_timeToPay));
-    _ctrlPayedTime = TextEditingController(text: Formatter.durationToString(_payedTime));
+    _ctrlpaidTime = TextEditingController(text: Formatter.durationToString(_paidTime));
     super.initState();
   }
 
@@ -124,11 +125,11 @@ class RegisterModalState extends State<RegisterModal> {
                           Flexible(
                             child: CustomTextField.dateTimeField(
                               validatorFunction: Validator.isRequired,
-                              controller: _ctrlPayedTime,
-                              label: "Payed time:",
+                              controller: _ctrlpaidTime,
+                              label: "paid time:",
                               onTap: () async {
-                                _payedTime = await _showTimePicker(initialTime: TimeOfDay(hour: _payedTime.inHours, minute: (_payedTime.inMinutes % 60)), helpText: 'Select the payed time');
-                                _ctrlPayedTime.text = Formatter.durationToString(_payedTime);
+                                _paidTime = await _showTimePicker(initialTime: TimeOfDay(hour: _paidTime.inHours, minute: (_paidTime.inMinutes % 60)), helpText: 'Select the paid time');
+                                _ctrlpaidTime.text = Formatter.durationToString(_paidTime);
                               },
                               hintText: 'Month & Year',
                             ),
@@ -136,16 +137,23 @@ class RegisterModalState extends State<RegisterModal> {
                         ],
                       ),
                       const SizedBox(height: 15),
-                      CustomTextField.currency(
-                        validatorFunction: Validator.isRequired,
-                        controller: _ctrlSalaryPerMonth,
-                        handleDecimal: true,
-                        label: 'Salary per month:',
-                        hintText: Formatter.formatNumber(0.0, showCurrencyPrefix: false),
-                        inputFormatters: [
-                          DecimalTextInputFormatter.regexSignal,
-                          DecimalTextInputFormatter(decimalRange: 2),
-                        ],
+                      ValueListenableBuilder(
+                        valueListenable: _ctrlSalaryPerMonth,
+                        builder: (context, textEditingValue, __) {
+                          return CustomTextField.currency(
+                            focusNode: _salaryPerMonthFocusNode,
+                            controller: _ctrlSalaryPerMonth,
+                            validatorFunction: Validator.isRequired,
+                            enableButtonCleanValue: textEditingValue.text.isNotEmpty,
+                            handleDecimal: true,
+                            label: 'Salary per month:',
+                            hintText: Formatter.formatNumber(0.0, showCurrencyPrefix: false),
+                            inputFormatters: [
+                              DecimalTextInputFormatter.regexSignal,
+                              DecimalTextInputFormatter(decimalRange: 2),
+                            ],
+                          );
+                        }
                       ),
                       const SizedBox(height: 15),
                       CustomTextField.dateTimeField(
@@ -207,7 +215,7 @@ class RegisterModalState extends State<RegisterModal> {
         company: _ctrlCompanyName.text,
         monthYear: _monthYear,
         timeToPay: _timeToPay,
-        payedTime: _payedTime,
+        paidTime: _paidTime,
         salaryPerMonth: Formatter.textToNum(text: _ctrlSalaryPerMonth.text).toDouble(),
         dailySalary: dailySalary,
         workingDaysCount: workingDaysCount,

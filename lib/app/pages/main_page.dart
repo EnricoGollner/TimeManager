@@ -63,9 +63,7 @@ class _MainPageState extends State<MainPage> {
         onPressed: _registerNewTime,
         label: Text(
           'New Dashboard',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.inversePrimary,
-          ),
+          style: fabStyle(context),
         ),
         icon: Icon(
           Icons.more_time,

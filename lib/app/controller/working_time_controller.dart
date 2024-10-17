@@ -59,6 +59,16 @@ class WorkingTimeController extends ChangeNotifier {
   Future<void> deleteTimeRegister(int id) async {
     // await isar.writeTxn(() => isar.workingTimeRegisters.delete(id));
     registers.removeWhere((element) => element.id == id);
-    await getTimeRegisters();
+    // await getTimeRegisters();
+  }
+
+  Future<void> updateRegister(int id, Duration paidTimeToAdd) async {
+    final Register register = registers.firstWhere((register) => register.id == id);
+    registers[registers.indexOf(register)] = register.copyWith(
+      paidTime: register.paidTime + paidTimeToAdd,
+    );
+    selectRegister(register);
+    notifyListeners();
+    // await getTimeRegisters();
   }
 }
