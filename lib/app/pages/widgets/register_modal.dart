@@ -115,7 +115,7 @@ class RegisterModalState extends State<RegisterModal> {
                               controller: _ctrlTimeToPay,
                               label: "Time to pay:",
                               onTap: () async {
-                                _timeToPay = await _showTimePicker(initialTime: TimeOfDay(hour: _timeToPay.inHours, minute: (_timeToPay.inMinutes % 60)), helpText: 'Select the time to pay');
+                                _timeToPay = await _showTimePicker(initialTime: TimeOfDay(hour: _timeToPay.inHours, minute: (_timeToPay.inMinutes % 60)), helpText: 'Select the time you owes:');
                                 _ctrlTimeToPay.text = Formatter.durationToString(_timeToPay);
                               },
                               hintText: 'Month & Year',
@@ -126,9 +126,9 @@ class RegisterModalState extends State<RegisterModal> {
                             child: CustomTextField.dateTimeField(
                               validatorFunction: Validator.isRequired,
                               controller: _ctrlpaidTime,
-                              label: "paid time:",
+                              label: "Paid time:",
                               onTap: () async {
-                                _paidTime = await _showTimePicker(initialTime: TimeOfDay(hour: _paidTime.inHours, minute: (_paidTime.inMinutes % 60)), helpText: 'Select the paid time');
+                                _paidTime = await _showTimePicker(initialTime: TimeOfDay(hour: _paidTime.inHours, minute: (_paidTime.inMinutes % 60)), helpText: 'Select the paid time:');
                                 _ctrlpaidTime.text = Formatter.durationToString(_paidTime);
                               },
                               hintText: 'Month & Year',
@@ -159,7 +159,7 @@ class RegisterModalState extends State<RegisterModal> {
                       CustomTextField.dateTimeField(
                         validatorFunction: Validator.isRequired,
                         controller: _ctrlHoursJourney,
-                        label: "Working journey hours",
+                        label: 'Working journey hours:',
                         onTap: () async {
                           _hoursJourney = await _showTimePicker(initialTime: TimeOfDay(hour: _hoursJourney.inHours, minute: (_hoursJourney.inMinutes % 60)), helpText: 'Select the working journey hours');
                           _ctrlHoursJourney.text = Formatter.durationToString(_hoursJourney);
@@ -211,17 +211,17 @@ class RegisterModalState extends State<RegisterModal> {
       final double dailySalary = getSalaryPerDay(workingDaysCount);
 
       final Register newRegister = Register(
-        company: _ctrlCompanyName.text,
+        company: _ctrlCompanyName.text.trim(),
         monthYear: _monthYear,
         timeToPay: _timeToPay,
-        paidTime: _paidTime,
+        paidRegisteredTime: _paidTime,
         salaryPerMonth: Formatter.textToNum(text: _ctrlSalaryPerMonth.text).toDouble(),
         dailySalary: dailySalary,
         workingDaysCount: workingDaysCount,
         workingJourneyHours: _hoursJourney,
       );
 
-      await context.read<WorkingTimeController>().createRegister(newRegister: newRegister);
+      await context.read<RegisterController>().createRegister(newRegister: newRegister);
       if (mounted) Navigator.pop(context);
     }
   }

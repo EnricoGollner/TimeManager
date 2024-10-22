@@ -18,19 +18,19 @@ class RegisterInfoPage extends StatefulWidget {
 }
 
 class _RegisterInfoPageState extends State<RegisterInfoPage> {
-  late WorkingTimeController _controller;
+  late RegisterController _controller;
   late Register _register;
 
   @override
   void initState() {
-    _controller = context.read<WorkingTimeController>();
+    _controller = context.read<RegisterController>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _register = context.watch<WorkingTimeController>().selectedRegister!;
-    
+    _register = context.watch<RegisterController>().selectedRegister!;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -39,7 +39,7 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
           IconButton(
             tooltip: 'Delete Dashboard',
             onPressed: () {
-              _controller.deleteRegister(_register.key);
+              _controller.deleteRegister(_register.id!);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.delete),
@@ -70,19 +70,30 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
                 ),
                 CustomValue(
                   label: 'Hourly salary',
-                  value: Formatter.formatNumber(_hourlySalary),
+                  value: Formatter.formatNumber(_register.hourlySalary),
                 ),
                 CustomValue(
-                  label: 'paid Time',
-                  value: Formatter.durationToString(_register.paidTime),
-                ),
-                CustomValue(
-                  label: 'Time to pay',
+                  label: 'Time to pay (initialy)',
                   value: Formatter.durationToString(_register.timeToPay),
                 ),
                 CustomValue(
+                  label: 'Paid Time',
+                  value: Formatter.durationToString(_register.paidTime),
+                ),
+                CustomValue(
                   label: 'Amount to pay',
-                  value: Formatter.formatNumber(_amountToPay),
+                  value: Formatter.formatNumber(_register.amountToPay),
+                  valueStyle: _register.amountToPay > 0 ? valueNegativeStyle : null,
+                ),
+                CustomValue(
+                  label: 'Extras (hours)',
+                  value: Formatter.durationToString(_register.extraTime),
+                  valueStyle: _register.extraTime.inMinutes > 0? valuePositiveStyle : null,
+                ),
+                CustomValue(
+                  label: 'Extras (R\$)',
+                  value: Formatter.formatNumber(_register.extraPayment),
+                  valueStyle: _register.extraPayment > 0 ? valuePositiveStyle : null,
                 ),
               ],
             ),
@@ -102,7 +113,10 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
             },
           );
           if (paidTime != null) {
-            _controller.updatePayedTimeInRegister(key: _register.key, duration: Duration(hours: paidTime.hour, minutes: paidTime.minute));
+            _controller.updatePayedTimeInRegister(
+              id: _register.id!,
+              paidDuration: Duration(hours: paidTime.hour, minutes: paidTime.minute),
+            );
           }
         },
         label: Text(
@@ -115,15 +129,5 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
         ),
       ),
     );
-  }
-
-  num get _hourlySalary {
-    return _register.dailySalary / (_register.workingJourneyHours.inMinutes / 60);
-  }
-
-  ///Returns the amount loosing if not paying the hours the user owes
-  double get _amountToPay {
-    double timeToPayInHours = _register.timeToPay.inMinutes / 60;
-    return _hourlySalary * timeToPayInHours;
   }
 }

@@ -39,6 +39,6 @@ class Formatter {
     final int hours = timeToPay.inHours;
     final int minutes = timeToPay.inMinutes % 60;
 
-    return '$hours:${minutes.toString().padLeft(2, '0')} horas';
+    return '$hours:${minutes.toString().padLeft(2, '0')} ${hours > 1 ? 'hours' : 'hour'}';
   }
 }

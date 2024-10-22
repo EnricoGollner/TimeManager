@@ -12,11 +12,22 @@ TextStyle valueLabel(BuildContext context) => GoogleFonts.dmSerifText(
     fontSize: 15.s2,
     color: Theme.of(context).colorScheme.inversePrimary,
   );
-
 TextStyle textFieldStyle(BuildContext context) => GoogleFonts.dmSans(
     fontSize: 13.5.s2,
     fontWeight: FontWeight.normal,
     color: Theme.of(context).colorScheme.inversePrimary,
+    decoration: TextDecoration.none,
+  );
+TextStyle get valueNegativeStyle => GoogleFonts.dmSans(
+    fontSize: 13.5.s2,
+    fontWeight: FontWeight.normal,
+    color: Colors.red,
+    decoration: TextDecoration.none,
+  );
+TextStyle get valuePositiveStyle => GoogleFonts.dmSans(
+    fontSize: 13.5.s2,
+    fontWeight: FontWeight.normal,
+    color: Colors.green,
     decoration: TextDecoration.none,
   );
 

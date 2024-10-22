@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
 import 'package:working_time_manager/app/data/repositories/register_repository.dart';
 
-class WorkingTimeController extends ChangeNotifier {
+class RegisterController extends ChangeNotifier {
   final RegisterRepository _repository = RegisterRepository();
   // List of registers
   final List<Register> _registers = [];
   List<Register> get registers => _registers;
-
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
 
   Register? _selectedRegister;
   Register? get selectedRegister => _selectedRegister;
@@ -19,10 +16,13 @@ class WorkingTimeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
   Future<void> createRegister({required Register newRegister}) async {
     final int? id = await _repository.createRegister(newRegister);
     id != null
-        ? _registers.add(newRegister)
+        ? _registers.add(newRegister.copyWith(id: id))
         : _errorMessage = 'Error while creating a new register';
 
     notifyListeners();
@@ -41,15 +41,21 @@ class WorkingTimeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePayedTimeInRegister({required int key, required Duration duration}) async {
-    final Register register = registers.firstWhere((register) => register.key == key);
-    final bool result = await _repository.updateRegister(
-      key,
-      register.copyWith(paidTime: register.paidTime + duration),
+  Future<void> updatePayedTimeInRegister({required int id, required Duration paidDuration}) async {
+    final Register register = registers.firstWhere((register) => register.id == id);
+
+    final Register updatedRegister = register.copyWith(
+      paidRegisteredTime: register.paidRegisteredTime + paidDuration,
     );
-    
-    if (!result) {
+
+    final bool result = await _repository.updateRegister(
+      id,
+      updatedRegister,
+    );
+
+    if (result) {
       await getRegisters();
+      selectRegister(updatedRegister);
     } else {
       _errorMessage = 'Error updating the register';
     }
@@ -57,20 +63,8 @@ class WorkingTimeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateRegister({required int key, required Register register}) async {
-    final bool result = await _repository.updateRegister(key, register);
-    
-    if (!result) {
-      await getRegisters();
-    } else {
-      _errorMessage = 'Error updating the register';
-    }
-
-    notifyListeners();
-  }
-
-  Future<void> deleteRegister(int key) async {
-    final bool result = await _repository.deleteRegister(key);
+  Future<void> deleteRegister(int id) async {
+    final bool result = await _repository.deleteRegister(id);
     
     if (result) {
       await getRegisters();

@@ -17,6 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  late RegisterController controller;
+  
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async => await _getRegisters());
@@ -25,7 +27,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final WorkingTimeController controller = context.watch<WorkingTimeController>();
+    controller = context.watch<RegisterController>();
     List<Register> timeRegistersList = controller.registers;
 
     return Scaffold(
@@ -48,10 +50,13 @@ class _MainPageState extends State<MainPage> {
             child: ListView.builder(
               itemCount: timeRegistersList.length,
               itemBuilder: (context, index) {
-                final time = timeRegistersList[index];
+                final Register register = timeRegistersList[index];
                 return TiemRegisterTile(
-                  text: '${time.company} - ${Formatter.monthYear(time.monthYear)}',
-                  onTap: () => _openRegister(time),
+                  text: '${register.company} - ${Formatter.monthYear(register.monthYear)}',
+                  onTap: () {
+                    controller.selectRegister(register);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterInfoPage()));
+                  },
                 );
               },
             ),
@@ -82,10 +87,5 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Future<void> _getRegisters() async => await context.read<WorkingTimeController>().getRegisters();
-
-  void _openRegister(Register register) {
-    context.read<WorkingTimeController>().selectRegister(register);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterInfoPage()));
-  }
+  Future<void> _getRegisters() async => await context.read<RegisterController>().getRegisters();
 }

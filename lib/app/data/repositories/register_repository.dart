@@ -9,7 +9,8 @@ class RegisterRepository {
 
   Future<List<Register>?> getRegisters() async {
     try {
-      return _registersBox.values.toList();
+      final List<Register> registers = _registersBox.values.toList().map((register) => register.copyWith(id: register.key)).toList();
+      return registers;
     } catch (error) {
       debugPrint(error.toString());
       return null;
@@ -25,18 +26,18 @@ class RegisterRepository {
     }
   }
 
-  Future<bool> updateRegister(int key, Register register) async {
+  Future<bool> updateRegister(int id, Register register) async {
     try {
-      await _registersBox.put(key, register);
+      await _registersBox.put(id, register);
       return true;
     } catch (_) {
       return false;
     }
   }
 
-  Future<bool> deleteRegister(int key) async {
+  Future<bool> deleteRegister(int id) async {
     try {
-      await _registersBox.delete(key);
+      await _registersBox.delete(id);
       return true;
     } catch (_) {
       return false;

@@ -21,7 +21,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => WorkingTimeController()),
+        ChangeNotifierProvider(create: (_) => RegisterController()),
       ],
       child: const WorkingTimeApp(),
     ),

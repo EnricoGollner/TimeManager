@@ -20,7 +20,7 @@ class RegisterAdapter extends TypeAdapter<Register> {
       company: fields[0] as String,
       monthYear: fields[1] as DateTime,
       timeToPay: fields[2] as Duration,
-      paidTime: fields[3] as Duration,
+      paidRegisteredTime: fields[3] as Duration,
       salaryPerMonth: fields[4] as double,
       dailySalary: fields[5] as double,
       workingDaysCount: fields[6] as int,
@@ -39,7 +39,7 @@ class RegisterAdapter extends TypeAdapter<Register> {
       ..writeByte(2)
       ..write(obj.timeToPay)
       ..writeByte(3)
-      ..write(obj.paidTime)
+      ..write(obj.paidRegisteredTime)
       ..writeByte(4)
       ..write(obj.salaryPerMonth)
       ..writeByte(5)
