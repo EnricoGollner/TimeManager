@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:working_time_manager/app/controller/working_time_controller.dart';
+import 'package:working_time_manager/app/controller/register_controller.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
 import 'package:working_time_manager/app/pages/widgets/custom_month_year_picker/custom_month_year_picker.dart';
 import 'package:working_time_manager/app/shared/components/custom_text_field.dart';
@@ -211,7 +211,6 @@ class RegisterModalState extends State<RegisterModal> {
       final double dailySalary = getSalaryPerDay(workingDaysCount);
 
       final Register newRegister = Register(
-        id: context.read<WorkingTimeController>().registers.length,
         company: _ctrlCompanyName.text,
         monthYear: _monthYear,
         timeToPay: _timeToPay,

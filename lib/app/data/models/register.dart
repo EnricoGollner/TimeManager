@@ -1,16 +1,27 @@
-class Register {
-  int id;
+import 'package:hive/hive.dart';
+
+part 'register.g.dart';
+
+@HiveType(typeId: 0)
+class Register extends HiveObject {
+  @HiveField(0)
   String company;
+  @HiveField(1)
   DateTime monthYear;
+  @HiveField(2)
   Duration timeToPay;
+  @HiveField(3)
   Duration paidTime;
+  @HiveField(4)
   double salaryPerMonth;
+  @HiveField(5)
   double dailySalary; //(obtained dividing salary per month by working days count)
+  @HiveField(6)
   int workingDaysCount;  // The app will obtain it, looping and counting every business day 
+  @HiveField(7)
   Duration workingJourneyHours;  //Not counting breaks
 
   Register({
-    required this.id,
     required this.company,
     required this.monthYear,
     required this.timeToPay,
@@ -26,7 +37,6 @@ class Register {
     if (identical(this, other)) return true;
   
     return 
-      other.id == id &&
       other.company == company &&
       other.monthYear == monthYear &&
       other.timeToPay == timeToPay &&
@@ -39,8 +49,7 @@ class Register {
 
   @override
   int get hashCode {
-    return id.hashCode ^
-      company.hashCode ^
+    return company.hashCode ^
       monthYear.hashCode ^
       timeToPay.hashCode ^
       paidTime.hashCode ^
@@ -80,7 +89,6 @@ class Register {
   }
 
   Register copyWith({
-    int? id,
     String? company,
     DateTime? monthYear,
     Duration? timeToPay,
@@ -91,7 +99,6 @@ class Register {
     Duration? workingJourneyHours,
   }) {
     return Register(
-      id: id ?? this.id,
       company: company ?? this.company,
       monthYear: monthYear ?? this.monthYear,
       timeToPay: timeToPay ?? this.timeToPay,

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:working_time_manager/app/controller/working_time_controller.dart';
+import 'package:working_time_manager/app/controller/register_controller.dart';
 import 'package:working_time_manager/app/data/models/register.dart';
 import 'package:working_time_manager/app/pages/widgets/custom_value.dart';
 import 'package:working_time_manager/app/pages/widgets/pizza_chart.dart';
@@ -30,6 +30,7 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
   @override
   Widget build(BuildContext context) {
     _register = context.watch<WorkingTimeController>().selectedRegister!;
+    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -38,7 +39,7 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
           IconButton(
             tooltip: 'Delete Dashboard',
             onPressed: () {
-              _controller.deleteTimeRegister(_register.id);
+              _controller.deleteRegister(_register.key);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.delete),
@@ -101,7 +102,7 @@ class _RegisterInfoPageState extends State<RegisterInfoPage> {
             },
           );
           if (paidTime != null) {
-            _controller.updateRegister(_register.id, Duration(hours: paidTime.hour, minutes: paidTime.minute));
+            _controller.updatePayedTimeInRegister(key: _register.key, duration: Duration(hours: paidTime.hour, minutes: paidTime.minute));
           }
         },
         label: Text(
